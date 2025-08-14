@@ -63,7 +63,7 @@ const KitchenPage: React.FC = () => {
             if (pedido.status === "pronto") bgColor = "bg-green-200";
 
             return (
-              <div key={pedido.id} className={`${bgColor} p-4 rounded-2xl shadow-lg`}>
+              <div key={pedido.id} className={`${bgColor} p-4 rounded-2xl shadow-lg text-gray-800 dark:text-black`}>
                 <h2 className="text-xl font-bold">Pedido #{pedido.id} - {pedido.nome_cliente}</h2>
                 <p className="text-sm mb-3">Status: <span className="font-semibold">{statusLabels[pedido.status] || pedido.status}</span></p>
                 <ul className="mb-4">
