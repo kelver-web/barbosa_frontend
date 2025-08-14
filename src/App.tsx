@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import SignIn from "./pages/AuthPages/SignIn";
 import SignUp from "./pages/AuthPages/SignUp";
 import NotFound from "./pages/OtherPage/NotFound";
@@ -18,6 +18,11 @@ import Blank from "./pages/Blank";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
+import Cardapio from "./pages/Menu/Cardapio";
+import ProductDetailPage from "./pages/ProductDetail/ProductDetailPage";
+import CartPage from "./pages/CartPage/CartPage";
+import KitchenPage from "./pages/KitchenPage/KitchenPage";
+
 
 export default function App() {
   return (
@@ -33,6 +38,12 @@ export default function App() {
             <Route path="/profile" element={<UserProfiles />} />
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/blank" element={<Blank />} />
+            <Route path="/cardapio" element={<Cardapio />} />
+            <Route path="/produto/:id" element={<ProductDetailPage />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/kitchen" element={<KitchenPage />} /> Cozinha
+
+            {/* Pages */}
 
             {/* Forms */}
             <Route path="/form-elements" element={<FormElements />} />
