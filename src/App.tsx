@@ -22,6 +22,8 @@ import Cardapio from "./pages/Menu/Cardapio";
 import ProductDetailPage from "./pages/ProductDetail/ProductDetailPage";
 import CartPage from "./pages/CartPage/CartPage";
 import KitchenPage from "./pages/KitchenPage/KitchenPage";
+import GarcomPedidos from "./pages/GarcomPedidos/GarcomPedidos";
+import TableMonitor from "./pages/TableMonitor/TableMonitor";
 
 
 export default function App() {
@@ -41,7 +43,9 @@ export default function App() {
             <Route path="/cardapio" element={<Cardapio />} />
             <Route path="/produto/:id" element={<ProductDetailPage />} />
             <Route path="/cart" element={<CartPage />} />
-            <Route path="/kitchen" element={<KitchenPage />} /> Cozinha
+            <Route path="/kitchen" element={<KitchenPage />} />
+            <Route path="/pedidos" element={<GarcomPedidos />} />
+            <Route path="/monitor" element={<TableMonitor />} />
 
             {/* Pages */}
 

@@ -59,10 +59,28 @@ const NotificationDropdown: React.FC = () => {
             {temPedidosProntos ? (
               pedidosParaExibir.map((pedido) => (
                 <li key={pedido.id} className="p-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
-                  <Link to={`/pedidos/${pedido.id}`} className="block text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-yellow-600 transition">
-                    Pedido #{pedido.id} - {pedido.nome_cliente} está pronto!
+                  <Link to={`/pedidos/${pedido.id}`} className="flex-1 block text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-yellow-600 transition">
+                    <div className="flex items-center gap-2 mb-1"> {/* 💡 Primeiras informações na mesma linha */}
+                      <FaBell size={16} className="text-yellow-500" />
+                      <span className="">
+                        Pedido #{pedido.id}
+                      </span>
+                      <span className="text-sm  text-purple-500 dark:text-green-400">
+                        Mesa #{pedido.mesa}
+                      </span>
+                    </div>
+                    <div className="text-sm">
+                      Cliente: <span className="italic">{pedido.nome_cliente}</span> &nbsp;está pronto!
+                    </div>
                   </Link>
-                  <button onClick={(e) => handleMarcarComoEntregue(e, pedido.id)} className="ml-2 text-gray-500 hover:text-red-500">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation(); // Previne o clique do link
+                      handleMarcarComoEntregue(e, pedido.id);
+                    }}
+                    className="ml-2 p-2 text-gray-500 hover:text-red-500 transition-colors"
+                    title="Marcar como entregue"
+                  >
                     <FaTimes size={16} />
                   </button>
                 </li>

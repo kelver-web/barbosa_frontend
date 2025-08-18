@@ -20,6 +20,8 @@ import { MdMenuBook } from "react-icons/md";
 
 import CartIconWithBadge from "./CartIconWithBadge";
 import KitchenIconWithBadge from "./KitchenIconWithBadge";
+import { BsBorderStyle } from "react-icons/bs";
+import { MdTableBar } from "react-icons/md";
 import { GoGear } from "react-icons/go";
 
 
@@ -43,12 +45,22 @@ const navItems: NavItem[] = [
   },
   {
     icon: <KitchenIconWithBadge />,
-    name: "Kitchen",
+    name: "Cozinha",
     path: "/kitchen",
   },
   {
+    icon: <BsBorderStyle />,
+    name: "Pedidos",
+    path: "/pedidos",
+  },
+  {
+    icon: <MdTableBar />,
+    name: "Mesas",
+    path: "/monitor",
+  },
+  {
     icon: <CartIconWithBadge />,
-    name: "Cart",
+    name: "Carrinho",
     path: "/cart",
   },
   {
