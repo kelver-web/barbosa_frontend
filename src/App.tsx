@@ -24,19 +24,18 @@ import CartPage from "./pages/CartPage/CartPage";
 import KitchenPage from "./pages/KitchenPage/KitchenPage";
 import GarcomPedidos from "./pages/GarcomPedidos/GarcomPedidos";
 import TableMonitor from "./pages/TableMonitor/TableMonitor";
-
+import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
+import Support from "./components/UserProfile/Support";
 
 export default function App() {
   return (
-    <>
-      <Router>
-        <ScrollToTop />
-        <Routes>
-          {/* Dashboard Layout */}
+    <Router>
+      <ScrollToTop />
+      <Routes>
+        {/* PRIVADO */}
+        <Route element={<PrivateRoute />}>
           <Route element={<AppLayout />}>
             <Route index path="/" element={<Home />} />
-
-            {/* Others Page */}
             <Route path="/profile" element={<UserProfiles />} />
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/blank" element={<Blank />} />
@@ -46,36 +45,30 @@ export default function App() {
             <Route path="/kitchen" element={<KitchenPage />} />
             <Route path="/pedidos" element={<GarcomPedidos />} />
             <Route path="/monitor" element={<TableMonitor />} />
+            <Route path="/support" element={<Support />} />
 
-            {/* Pages */}
 
-            {/* Forms */}
+            {/* Forms / Tables / UI / Charts também PRIVADOS */}
             <Route path="/form-elements" element={<FormElements />} />
-
-            {/* Tables */}
             <Route path="/basic-tables" element={<BasicTables />} />
-
-            {/* Ui Elements */}
             <Route path="/alerts" element={<Alerts />} />
             <Route path="/avatars" element={<Avatars />} />
             <Route path="/badge" element={<Badges />} />
             <Route path="/buttons" element={<Buttons />} />
             <Route path="/images" element={<Images />} />
             <Route path="/videos" element={<Videos />} />
-
-            {/* Charts */}
             <Route path="/line-chart" element={<LineChart />} />
             <Route path="/bar-chart" element={<BarChart />} />
           </Route>
+        </Route>
 
-          {/* Auth Layout */}
-          <Route path="/signin" element={<SignIn />} />
-          <Route path="/signup" element={<SignUp />} />
+        {/* PÚBLICO */}
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/signup" element={<SignUp />} />
 
-          {/* Fallback Route */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Router>
-    </>
+        {/* 404 */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Router>
   );
 }

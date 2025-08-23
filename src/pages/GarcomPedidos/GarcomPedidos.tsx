@@ -13,6 +13,7 @@ import { FaRegEdit, FaCheckCircle } from "react-icons/fa";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { MdOutlineCancel } from "react-icons/md";
 
+
 // Interfaces
 interface Produto {
   id: number;
@@ -49,7 +50,6 @@ const statusLabels: Record<string, string> = {
   pago: "Pago",
 };
 
-// ✅ NOVO: Defina o tamanho da página como uma constante
 const PEDIDOS_PAGE_SIZE = 8; 
 
 export default function RecentOrders() {
@@ -73,8 +73,7 @@ export default function RecentOrders() {
       const response = await api.get(`/pedidos/?page=${page}&page_size=${PEDIDOS_PAGE_SIZE}`);
       
       setPedidos(response.data.results || []);
-      
-      // ✅ CORREÇÃO: Usar a constante para o cálculo
+
       if (response.data.count) {
           setTotalPages(Math.ceil(response.data.count / PEDIDOS_PAGE_SIZE));
       } else {
