@@ -1,5 +1,5 @@
 // Exemplo de código no componente pai (ex: ProductDetailPage.tsx)
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import api from '../../services/api'; // Onde sua API está configurada
 import ProductDetail from './ProductDetail';

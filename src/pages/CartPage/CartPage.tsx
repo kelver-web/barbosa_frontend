@@ -68,6 +68,7 @@ const CartPage = () => {
         itens_pedido: cartItems.map(item => ({
           produto_id: item.id,
           quantidade: item.quantidade,
+          observacoes: item.observacoes,
         })),
       };
 
@@ -97,7 +98,6 @@ const CartPage = () => {
     <div className="w-full mx-auto bg-white dark:bg-gray-900 p-6 rounded-lg shadow">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">Pedido #{pedidoId}</h1>
-        <p className="text-sm text-gray-600 dark:text-gray-400">Nome do cliente: <span className="italic">{clienteNome}</span></p>
       </div>
       <div className="text-sm text-gray-800 dark:text-gray-200 font-mono border-t border-b border-gray-300 dark:border-gray-700 divide-y divide-gray-200 dark:divide-gray-700">
         {cartItems.map((item, index) => (

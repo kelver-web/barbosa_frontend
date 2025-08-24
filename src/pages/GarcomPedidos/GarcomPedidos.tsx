@@ -29,6 +29,7 @@ interface ItemPedido {
   quantidade: number;
   produto: Produto;
   adicionado_em: string;
+  observacoes?: string; 
 }
 
 interface Pedido {
@@ -95,9 +96,8 @@ export default function RecentOrders() {
   useEffect(() => {
     async function fetchProdutos() {
       try {
-        const response = await api.get("/produtos/?page_size=9999");
-        // ✅ CORREÇÃO: Padronize a forma de pegar a lista de produtos
-        setProdutosDisponiveis(response.data.results || []);
+        const response = await api.get("/produtos/");
+        setProdutosDisponiveis(response.data);
       } catch (err) {
         console.error("Erro ao buscar produtos:", err);
       }
@@ -260,6 +260,11 @@ export default function RecentOrders() {
                       {Array.isArray(pedido.itens_pedido) && pedido.itens_pedido.map((item) => (
                         <li key={item.id}>
                           {item.quantidade}x {item.produto?.nome || "Produto"}
+                          {item.observacoes && (
+                            <span className="ml-2 text-sm text-gray-400 dark:text-gray-500">
+                                ({item.observacoes})
+                            </span>
+                          )}
                         </li>
                       ))}
                     </ul>
@@ -290,7 +295,6 @@ export default function RecentOrders() {
                   </TableCell>
                   <TableCell className="py-3">
                     <div className="flex items-center gap-2">
-                      {/* Botão de reabrir aparece se o status não for pendente ou pago */}
                       {pedido.status !== 'pendente' && pedido.status !== 'pago' && (
                         <button
                           onClick={() => reabrirPedido(pedido.id)}
@@ -299,7 +303,6 @@ export default function RecentOrders() {
                           Reabrir
                         </button>
                       )}
-                      {/* Botões de editar e cancelar aparecem apenas para pedidos pendentes */}
                       {pedido.status === 'pendente' && (
                         <>
                           <div className="relative group">
@@ -307,7 +310,6 @@ export default function RecentOrders() {
                               className="text-gray-500 size-5 dark:text-purple-600 cursor-pointer transform hover:scale-110"
                               onClick={() => cancelarReabertura(pedido.id)}
                             />
-                            {/* Tooltip */}
                             <div className="absolute top-full mt-1 left-1/2 -translate-x-1/2 z-10 w-max bg-gray-700 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                               Cancelar Reabertura
                             </div>
@@ -320,7 +322,6 @@ export default function RecentOrders() {
                                 setModalOpen(true);
                               }}
                             />
-                            {/* Tooltip */}
                             <div className="absolute top-full mt-1 left-1/2 -translate-x-1/2 z-10 w-max bg-gray-700 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                               Editar Pedido
                             </div>
@@ -328,14 +329,12 @@ export default function RecentOrders() {
                         </>
                       )}
                       
-                      {/* NOVO BOTÃO DE PAGAMENTO */}
                       {pedido.status !== 'pago' && (
                           <div className="relative group">
                             <FaCheckCircle
                               className="text-green-600 size-5 cursor-pointer transform hover:scale-110"
                               onClick={() => handleMarcarComoPago(pedido.id)}
                             />
-                            {/* Tooltip */}
                             <div className="absolute top-full mt-1 left-1/2 -translate-x-1/2 z-10 w-max bg-gray-700 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                               Marcar como Pago
                             </div>
@@ -345,7 +344,6 @@ export default function RecentOrders() {
                       <div className="relative group">
                         <FaRegTrashCan className="text-gray-500 dark:text-red-400 cursor-pointer transform hover:scale-110" />
 
-                        {/* Tooltip */}
                         <div className="absolute top-full mt-1 left-1/2 -translate-x-1/2 z-10 w-max bg-gray-700 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                           Apagar Pedido
                         </div>

@@ -238,7 +238,7 @@ export default function MonthlyTarget() {
           <p className="mb-1 text-center text-gray-500 text-theme-xs dark:text-gray-400 sm:text-sm">
             Alvo
           </p>
-          <p className="flex items-center justify-center gap-1 text-base font-semibold text-blue-800 dark:text-blue/100 sm:text-lg">
+          <p className="flex items-center justify-center gap-1 text-base font-semibold text-blue-400 dark:text-blue/100 sm:text-lg">
             {formatCurrency(metrics.target_value)}
           </p>
         </div>
@@ -247,7 +247,7 @@ export default function MonthlyTarget() {
           <p className="mb-1 text-center text-gray-500 text-theme-xs dark:text-gray-400 sm:text-sm">
             Receita
           </p>
-          <p className="flex items-center justify-center gap-1 text-base font-semibold text-blue-800 dark:text-blue/90 sm:text-lg">
+          <p className="flex items-center justify-center gap-1 text-base font-semibold text-blue-400 dark:text-blue/90 sm:text-lg">
             {formatCurrency(metrics.revenue)}
           </p>
         </div>
@@ -256,7 +256,7 @@ export default function MonthlyTarget() {
           <p className="mb-1 text-center text-gray-500 text-theme-xs dark:text-gray-400 sm:text-sm">
             Hoje
           </p>
-          <p className="flex items-center justify-center gap-1 text-base font-semibold text-blue-800 dark:text-blue/90 sm:text-lg">
+          <p className="flex items-center justify-center gap-1 text-base font-semibold text-blue-400 dark:text-blue/90 sm:text-lg">
             {formatCurrency(metrics.today)}
           </p>
         </div>

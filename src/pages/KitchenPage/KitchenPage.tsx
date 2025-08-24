@@ -57,6 +57,11 @@ const KitchenPage: React.FC = () => {
                         className={isNew ? "text-green-700 font-bold" : ""}
                       >
                         {item.quantidade}x {item.produto.nome}
+                        {item.observacoes && (
+                          <span className="ml-2 text-sm font-normal text-gray-700">
+                              Obs: ({item.observacoes})
+                          </span>
+                        )}
                         {isNew && (
                           <span className="text-sm font-normal text-green-500"> (novo)</span>
                         )}
