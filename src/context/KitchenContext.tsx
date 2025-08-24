@@ -1,82 +1,98 @@
-// src/context/KitchenContext.tsx
-import React, { createContext, useState, useContext, ReactNode, useEffect, useCallback, useRef } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import api from "../services/api";
+
+interface Produto {
+  nome: string;
+}
+
+interface ItemPedido {
+  id: number;
+  quantidade: number;
+  produto: Produto;
+  adicionado_em: string;
+  is_extra?: boolean;
+}
 
 interface Pedido {
   id: number;
   nome_cliente: string;
-  criado_em: string;
+  mesa: number;
   status: string;
-  itens: any[];
+  itens_pedido: ItemPedido[];
 }
 
 interface KitchenContextType {
   pedidosCozinha: Pedido[];
+  atualizarPedido: (pedido: Pedido) => void;
 }
 
-const KitchenContext = createContext<KitchenContextType | undefined>(undefined);
+const KitchenContext = createContext<KitchenContextType>({
+  pedidosCozinha: [],
+  atualizarPedido: () => {},
+});
 
-export const KitchenProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const useKitchen = () => useContext(KitchenContext);
+
+export const KitchenProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [pedidosCozinha, setPedidosCozinha] = useState<Pedido[]>([]);
-  const wsRef = useRef<WebSocket | null>(null);
 
-  const fetchPedidosAtivos = useCallback(async () => {
+  const atualizarPedido = (pedido: Pedido) => {
+    setPedidosCozinha((prev) => {
+      if (
+        pedido.status === "pronto" ||
+        pedido.status === "entregue" ||
+        pedido.status === "pago"
+      ) {
+        return prev.filter((p) => p.id !== pedido.id);
+      }
+
+      const idx = prev.findIndex((p) => p.id === pedido.id);
+      if (idx !== -1) {
+        const newArr = [...prev];
+        newArr[idx] = { ...newArr[idx], ...pedido };
+        return newArr;
+      } else {
+        return [pedido, ...prev];
+      }
+    });
+  };
+
+  const fetchPedidos = async () => {
     try {
-      const response = await api.get("/pedidos/");
-      const data = Array.isArray(response.data) ? response.data : response.data.results || [];
-      const ativos = data.filter((pedido: Pedido) =>
-        ["pendente", "preparando"].includes(pedido.status)
-      );
-      setPedidosCozinha(ativos);
-    } catch (error) {
-      console.error("Erro ao buscar pedidos ativos para o contexto:", error);
-      setPedidosCozinha([]);
+      const res = await api.get("/pedidos/?status__in=pendente,preparando");
+      const pedidos = res.data.results || res.data;
+      setPedidosCozinha(pedidos);
+    } catch (err) {
+      console.error("Erro ao buscar pedidos da cozinha:", err);
     }
-  }, []);
+  };
 
   useEffect(() => {
-    fetchPedidosAtivos();
+    fetchPedidos();
 
-    // URL CORRIGIDA PARA APONTAR PARA O BACKEND DO DJANGO
-    const protocol = window.location.protocol === "https:" ? "wss" : "ws";
-    const host = "127.0.0.1:8000"; // Host do seu servidor Django
-    const url = `${protocol}://${host}/ws/pedidos/`;
+    const ws = new WebSocket("ws://127.0.0.1:8000/ws/pedidos/");
 
-    console.log("Conectando WebSocket do KitchenProvider em:", url);
-    const ws = new WebSocket(url);
-    wsRef.current = ws;
+    ws.onopen = () => console.log("Conectado ao WebSocket da cozinha");
 
-    ws.onopen = () => {
-      console.log("WebSocket da Cozinha conectado.");
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.itens_pedido) {
+        atualizarPedido(data);
+      }
     };
 
-    ws.onmessage = () => {
-      console.log("Mensagem recebida no KitchenProvider. Atualizando lista de cozinha...");
-      fetchPedidosAtivos();
-    };
-
-    ws.onclose = () => console.log("WebSocket do KitchenProvider fechado.");
-    ws.onerror = (err) => console.error("Erro no WebSocket do KitchenProvider:", err);
-
-    const pollInterval = setInterval(fetchPedidosAtivos, 5000);
+    ws.onclose = () => console.log("WebSocket da cozinha fechado");
 
     return () => {
       ws.close();
-      clearInterval(pollInterval);
     };
-  }, [fetchPedidosAtivos]);
+  }, []);
 
   return (
-    <KitchenContext.Provider value={{ pedidosCozinha }}>
+    <KitchenContext.Provider value={{ pedidosCozinha, atualizarPedido }}>
       {children}
     </KitchenContext.Provider>
   );
-};
-
-export const useKitchen = () => {
-  const context = useContext(KitchenContext);
-  if (context === undefined) {
-    throw new Error("useKitchen must be used within a KitchenProvider");
-  }
-  return context;
 };

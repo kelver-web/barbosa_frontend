@@ -46,7 +46,7 @@ const ProductsGrid: React.FC<ProductsGridProps> = ({ products }) => {
         <button
           key={product.id}
           onClick={() => handleProductDetail(product.id)}
-          className="block h-full flex flex-col"
+          className="block h-full flex flex-col justify-between"
           style={{ textDecoration: "none", color: "inherit" }}
         >
           <ProductCard product={product} />

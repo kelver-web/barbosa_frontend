@@ -8,6 +8,15 @@ import GoalModal from "./GoalModal";
 import api from "../../services/api";
 import { formatCurrency } from "../../services/formatCurrency";
 
+interface Goal {
+  id: number;
+  period: string;
+  target_value: number;
+  start_date?: string;
+  end_date?: string;
+  percent: number;
+}
+
 interface Metrics {
   target_value: number;
   target_percent: number;
@@ -26,59 +35,81 @@ export default function MonthlyTarget() {
     today: 0,
     variation: 0,
   });
-  const [goalInitialValue, setGoalInitialValue] = useState<any>({});
+  const [goalInitialValue, setGoalInitialValue] = useState<Goal | null>(null);
 
-  // Buscar métricas e meta do backend
-  useEffect(() => {
-    async function fetchMetrics() {
-      try {
-        const res = await api.get("/pedidos/metrics/");
-        setMetrics({
-          target_value: res.data.target_value || 0,
-          target_percent: res.data.target_percent || 0,
-          revenue: res.data.revenue || 0,
-          today: res.data.today || 0,
-          variation: res.data.variation || 0,
+  // Função para buscar a meta e atualizar a porcentagem
+  const fetchGoal = async () => {
+    try {
+      const res = await api.get("/goals/");
+      if (res.data.results && res.data.results.length > 0) {
+        const goal = res.data.results[0];
+        setGoalInitialValue({
+          id: goal.id,
+          period: goal.period,
+          target_value: parseFloat(goal.target_value),
+          start_date: goal.start_date,
+          end_date: goal.end_date,
+          percent: goal.percent || 0,
         });
-      } catch (err) {
-        console.error("Erro ao buscar métricas:", err);
+        setMetrics((prev) => ({
+          ...prev,
+          target_value: parseFloat(goal.target_value),
+        }));
+      } else {
+        setGoalInitialValue(null);
+        setMetrics((prev) => ({
+          ...prev,
+          target_value: 0,
+        }));
       }
+    } catch (err) {
+      console.error("Erro ao buscar meta:", err);
     }
+  };
 
-    async function fetchGoal() {
-      try {
-        const res = await api.get("/goals/");
-        if (res.data.results && res.data.results.length > 0) {
-          const goal = res.data.results[0];
-          setGoalInitialValue(goal);
-          setMetrics((prev) => ({
-            ...prev,
-            target_value: parseFloat(goal.target_value),
-            target_percent: goal.percent || prev.target_percent,
-          }));
-        }
-      } catch (err) {
-        console.error("Erro ao buscar meta:", err);
-      }
+  // Função para buscar métricas e recalcular a porcentagem
+  async function fetchMetrics() {
+    try {
+      const res = await api.get("/pedidos/metrics/");
+      const vendasTotais = res.data.vendas_totais || 0;
+      
+      setMetrics((prev) => {
+        // Calcula a porcentagem aqui
+        const target_percent = prev.target_value > 0 
+          ? (vendasTotais / prev.target_value) * 100 
+          : 0;
+          
+        return {
+          ...prev,
+          revenue: vendasTotais,
+          today: vendasTotais,
+          target_percent: Math.min(100, target_percent), // Limita em 100%
+          variation: res.data.variation || 0,
+        };
+      });
+    } catch (err) {
+      console.error("Erro ao buscar métricas:", err);
     }
+  }
 
-    fetchMetrics();
-    fetchGoal();
+  useEffect(() => {
+    // A ordem é importante: busca a meta primeiro, depois as métricas
+    // para garantir que a meta esteja disponível para o cálculo da porcentagem.
+    fetchGoal().then(() => {
+      fetchMetrics();
+    });
   }, []);
 
+  // Recarrega as métricas sempre que a meta for atualizada
+  useEffect(() => {
+    fetchMetrics();
+  }, [goalInitialValue?.target_value]);
+  
   async function deleteGoal() {
-    if (!goalInitialValue.id) return; // nada a deletar
+    if (!goalInitialValue || !goalInitialValue.id) return;
     try {
       await api.delete(`/goals/${goalInitialValue.id}/`);
-      setGoalInitialValue({}); // limpa meta
-      setMetrics((prev) => ({
-        ...prev,
-        target_value: 0,
-        target_percent: 0,
-        period: undefined,
-        start_date: undefined,
-        end_date: undefined,
-      }));
+      fetchGoal();
     } catch (err: any) {
       console.error("Erro ao deletar meta:", err);
       alert("Erro ao deletar meta");
@@ -103,7 +134,7 @@ export default function MonthlyTarget() {
             fontWeight: "600",
             offsetY: -40,
             color: "#1D2939",
-            formatter: (val: number) => `${val}%`,
+            formatter: (val: number) => `${val.toFixed(2)}%`,
           },
         },
       },
@@ -140,17 +171,15 @@ export default function MonthlyTarget() {
         end_date: goal.end_date || null,
       };
 
-      const res = await api.post("/goals/", body);
-      const data = res.data;
-
-      setGoalInitialValue(data);
-      setMetrics((prev) => ({
-        ...prev,
-        target_value: parseFloat(data.target_value),
-        target_percent: data.percent || prev.target_percent,
-      }));
-
+      if (goalInitialValue && goalInitialValue.id) {
+        await api.patch(`/goals/${goalInitialValue.id}/`, body);
+      } else {
+        await api.post("/goals/", body);
+      }
+      
+      fetchGoal();
       setModalOpen(false);
+      closeDropdown();
     } catch (err: any) {
       console.error("Erro ao salvar meta:", err);
       alert("Erro ao salvar meta");
@@ -237,7 +266,7 @@ export default function MonthlyTarget() {
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
         onSave={saveGoal}
-        initialValue={goalInitialValue}
+        initialValue={goalInitialValue || undefined}
       />
     </div>
   );

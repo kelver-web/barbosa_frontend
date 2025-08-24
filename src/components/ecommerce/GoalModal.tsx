@@ -35,8 +35,8 @@ export default function GoalModal({ isOpen, onClose, onSave, initialValue }: Goa
   }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-      <div className="bg-white rounded-xl shadow-lg p-6 w-96 dark:bg-gray-900">
+    <div className="fixed inset-0 flex items-center justify-center bg-black/60 z-50">
+      <div className="bg-white rounded-xl shadow-lg p-6 w-96 dark:bg-gray-800">
         <h2 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Definir Meta</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -86,10 +86,10 @@ export default function GoalModal({ isOpen, onClose, onSave, initialValue }: Goa
           )}
 
           <div className="flex justify-end gap-2">
-            <button type="button" onClick={onClose} className="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 dark:text-white">
+            <button type="button" onClick={onClose} className="text-sm font-medium text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 border border-blue-800 dark:border-blue-400 rounded-lg px-4 py-1">
               Cancelar
             </button>
-            <button type="submit" className="px-4 py-2 rounded-lg bg-blue-600 text-white">
+            <button type="submit" className="text-sm font-medium text-green-500 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 border border-green-800 dark:border-green-400 rounded-lg px-4 py-1">
               Salvar
             </button>
           </div>

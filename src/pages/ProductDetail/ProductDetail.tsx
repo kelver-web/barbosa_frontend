@@ -51,13 +51,21 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white dark:bg-gray-900 rounded-xl shadow-lg mt-8">
       <div className="flex flex-col md:flex-row gap-6">
-        {/* Imagem */}
-        <div className="flex-shrink-0 w-full md:w-1/2">
-          <ProdutoImagem
-            id={product.id}
-            alt={product.nome}
-            className="w-full h-64 md:h-auto rounded-lg object-cover shadow"
-          />
+
+        <div className="">
+          <div className="flex items-center justify-center mb-4 gap-4">
+            
+            <span>
+
+              <ProdutoImagem
+                id={product.id}
+                alt={product.nome}
+                className="w-50 md:h-auto rounded-lg object-cover shadow"
+              />
+            </span>
+            
+
+          </div>
 
           <button
             onClick={backToMenu}
