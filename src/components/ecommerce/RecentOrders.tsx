@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "../ui/table";
 import Badge from "../ui/badge/Badge";
-import { FaBox } from 'react-icons/fa';
+import { FaBox } from "react-icons/fa";
 
 interface ItemPedido {
   produto: {
@@ -22,6 +22,7 @@ interface ItemPedido {
   quantidade: number;
   adicionado_em: string;
 }
+
 interface Pedido {
   id: number;
   itens_pedido: ItemPedido[];
@@ -35,26 +36,28 @@ const PAGE_SIZE = 8;
 export default function RecentOrders() {
   const [orders, setOrders] = useState<Pedido[] | null>(null);
   const [loading, setLoading] = useState(true);
-  
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+
+
+  // Filtros
+  const [statusFiltro, setStatusFiltro] = useState<string | null>(null);
+  const [categoriaFiltro, setCategoriaFiltro] = useState<string | null>(null);
+  const [filtrando, setFiltrando] = useState(false);
 
   const fetchRecentOrders = async (pageNumber: number) => {
     setLoading(true);
     try {
       const response = await api.get(`/pedidos/recent_orders/?page=${pageNumber}`);
-      
-      const totalItems = response.data.count;
-      
-      // ✅ CORREÇÃO: Pegue a lista de pedidos do campo `results`
-      setOrders(response.data.results); 
-      
-      if (totalItems) {
-         setTotalPages(Math.ceil(totalItems / PAGE_SIZE));
-      } else {
-         setTotalPages(1); 
-      }
 
+      const totalItems = response.data.count;
+      setOrders(response.data.results);
+
+      if (totalItems) {
+        setTotalPages(Math.ceil(totalItems / PAGE_SIZE));
+      } else {
+        setTotalPages(1);
+      }
     } catch (error) {
       console.error("Erro ao buscar pedidos recentes:", error);
       setOrders([]);
@@ -80,7 +83,26 @@ export default function RecentOrders() {
         return "info";
     }
   };
-  
+
+  // Filtrar pedidos
+  const pedidosFiltrados = (orders ?? [])
+    .filter((pedido) =>
+      statusFiltro ? pedido.status === statusFiltro : true
+    )
+    .filter((pedido) =>
+      categoriaFiltro
+        ? pedido.itens_pedido.some(
+          (item) => item.produto.categoria.nome === categoriaFiltro
+        )
+        : true
+    );
+  const aplicarFiltro = () => setFiltrando(true);
+  const limparFiltro = () => {
+    setStatusFiltro(null);
+    setCategoriaFiltro(null);
+    setFiltrando(false);
+  };
+
   if (loading) {
     return (
       <div className="w-full overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
@@ -93,7 +115,7 @@ export default function RecentOrders() {
       </div>
     );
   }
-  
+
   if (!orders || orders.length === 0) {
     return (
       <div className="w-full overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
@@ -110,100 +132,113 @@ export default function RecentOrders() {
   return (
     <div className="w-full rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
       <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-            Pedidos Recentes
-          </h3>
-        </div>
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
+          Pedidos Recentes
+        </h3>
 
-        <div className="flex items-center gap-3">
-          <button className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
-            <svg
-              className="stroke-current fill-white dark:fill-gray-800"
-              width="20"
-              height="20"
-              viewBox="0 0 20 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M2.29004 5.90393H17.7067"
-                stroke=""
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M17.7075 14.0961H2.29085"
-                stroke=""
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M12.0826 3.33331C13.5024 3.33331 14.6534 4.48431 14.6534 5.90414C14.6534 7.32398 13.5024 8.47498 12.0826 8.47498C10.6627 8.47498 9.51172 7.32398 9.51172 5.90415C9.51172 4.48432 10.6627 3.33331 12.0826 3.33331Z"
-                fill=""
-                stroke=""
-                strokeWidth="1.5"
-              />
-              <path
-                d="M7.91745 11.525C6.49762 11.525 5.34662 12.676 5.34662 14.0959C5.34661 15.5157 6.49762 16.6667 7.91745 16.6667C9.33728 16.6667 10.4883 15.5157 10.4883 14.0959C10.4883 12.676 9.33728 11.525 7.91745 11.525Z"
-                fill=""
-                stroke=""
-                strokeWidth="1.5"
-              />
-            </svg>
+        <div className="flex items-center gap-2">
+          {/* Status filtro */}
+          <select
+            value={statusFiltro || ""}
+            onChange={(e) => setStatusFiltro(e.target.value || null)}
+            className="px-3 py-1.5 border rounded text-sm text-gray-400 bg-gray-00"
+          >
+            <option value="">Todos os status</option>
+            <option value="pendente">Pendente</option>
+            <option value="pago">Pago</option>
+            <option value="cancelado">Cancelado</option>
+          </select>
+
+          {/* Categoria filtro */}
+          <select
+            value={categoriaFiltro || ""}
+            onChange={(e) => setCategoriaFiltro(e.target.value || null)}
+            className="px-3 py-1.5 border rounded text-sm text-gray-400 bg-gray-00"
+          >
+            <option value="">Todas as categorias</option>
+            {orders
+              ?.flatMap((pedido) =>
+                pedido.itens_pedido.map((item) => item.produto.categoria.nome)
+              )
+              .filter((value, index, self) => self.indexOf(value) === index)
+              .map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+          </select>
+
+          {/* Botões aplicar/limpar */}
+          <button
+            onClick={aplicarFiltro}
+            className="text-sm font-medium text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 border border-blue-800 dark:border-blue-400 rounded px-4 py-1.5"
+          >
             Filtrar
           </button>
-          <button className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
+          <button
+            onClick={limparFiltro}
+            className="text-sm font-medium text-green-500 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 border border-green-800 dark:border-green-400 rounded px-4 py-1.5"
+          >
             Ver tudo
           </button>
         </div>
       </div>
+
       <div className="max-w-full overflow-x-auto">
         <Table className="w-full">
           <TableHeader className="border-gray-100 dark:border-gray-800 border-y">
             <TableRow>
-              <TableCell isHeader className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400 min-w-[250px]">Produtos</TableCell>
-              <TableCell isHeader className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400 min-w-[120px]">Preço</TableCell>
-              <TableCell isHeader className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400 min-w-[120px]">Categoria</TableCell>
-              <TableCell isHeader className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400 min-w-[100px]">Status</TableCell>
+              <TableCell isHeader className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400 min-w-[250px]">
+                Produtos
+              </TableCell>
+              <TableCell isHeader className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400 min-w-[120px]">
+                Preço
+              </TableCell>
+              <TableCell isHeader className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400 min-w-[120px]">
+                Categoria
+              </TableCell>
+              <TableCell isHeader className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400 min-w-[100px]">
+                Status
+              </TableCell>
             </TableRow>
           </TableHeader>
-            <TableBody className="divide-y divide-gray-100 dark:divide-gray-800">
-              {orders.map((pedido) => (
-                <TableRow key={pedido.id}>
-                  <TableCell className="py-3 px-4">
-                    <div className="flex items-center gap-3">
-                      <div className="h-[50px] w-[50px] overflow-hidden rounded-md">
-                        <div className="bg-gray-200 h-[50px] w-[50px] flex items-center justify-center text-gray-500">
-                           <FaBox className="w-8 h-8" />
-                        </div>
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-medium text-gray-800 text-theme-sm dark:text-white/90 whitespace-normal">
-                           {`ID: ${pedido.id} - ${pedido.itens_pedido?.map(item => item.produto.nome).join(', ') ?? 'Nenhum item'}`}
-                        </p>
-                        <span className="text-gray-500 text-theme-xs dark:text-gray-400 whitespace-normal">
-                          {pedido.itens_pedido?.length ?? 0} {pedido.itens_pedido?.length > 1 ? 'Itens' : 'Item'}
-                        </span>
+          <TableBody className="divide-y divide-gray-100 dark:divide-gray-800">
+            {(filtrando ? pedidosFiltrados : orders).map((pedido) => (
+              <TableRow key={pedido.id}>
+                <TableCell className="py-3 px-4">
+                  <div className="flex items-center gap-3">
+                    <div className="h-[50px] w-[50px] overflow-hidden rounded-md">
+                      <div className="bg-gray-200 h-[50px] w-[50px] flex items-center justify-center text-gray-500">
+                        <FaBox className="w-8 h-8" />
                       </div>
                     </div>
-                  </TableCell>
-                  <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                    R$ {pedido.valor_total.toFixed(2).replace('.', ',')}
-                  </TableCell>
-                  <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                    {pedido.itens_pedido?.[0]?.produto.categoria?.nome ?? 'Sem categoria'}
-                  </TableCell>
-                  <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                    <Badge size="sm" color={getBadgeColor(pedido.status)}>
-                      {pedido.status}
-                    </Badge>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
+                    <div className="flex-1">
+                      <p className="font-medium text-gray-800 text-theme-sm dark:text-white/90 whitespace-normal">
+                        {`ID: ${pedido.id} - ${pedido.itens_pedido
+                          ?.map((item) => item.produto.nome)
+                          .join(", ") ?? "Nenhum item"}`}
+                      </p>
+                      <span className="text-gray-500 text-theme-xs dark:text-gray-400 whitespace-normal">
+                        {pedido.itens_pedido?.length ?? 0}{" "}
+                        {pedido.itens_pedido?.length > 1 ? "Itens" : "Item"}
+                      </span>
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                  R$ {pedido.valor_total.toFixed(2).replace(".", ",")}
+                </TableCell>
+                <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                  {pedido.itens_pedido?.[0]?.produto.categoria?.nome ?? "Sem categoria"}
+                </TableCell>
+                <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                  <Badge size="sm" color={getBadgeColor(pedido.status)}>
+                    {pedido.status}
+                  </Badge>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
         </Table>
       </div>
 
