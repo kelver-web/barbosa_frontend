@@ -13,7 +13,6 @@ export default function SupportPage() {
         message: "",
     });
     const [loading, setLoading] = useState(false);
-    const [success, setSuccess] = useState(false);
 
     // Pega o nome e o email do usuário logado
     useEffect(() => {
@@ -57,7 +56,6 @@ export default function SupportPage() {
         setLoading(true);
         try {
             await api.post("/support/", formData);
-            setSuccess(true);
             setFormData({ name: formData.name, email: formData.email, subject: "", message: "" });
             toast.success("Mensagem enviada com sucesso!");
         } catch (err) {
@@ -95,13 +93,13 @@ export default function SupportPage() {
                     {/* Contatos Rápidos */}
                     <div className="grid grid-cols-1 gap-5 sm:grid-cols-3 mb-12">
                         <a
-                            href="mailto:suporte@seudominio.com"
+                            href="mailto:kelverwt@gmail.com"
                             className="flex flex-col items-center justify-center rounded-xl border border-gray-200 bg-gray-50 p-5 text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:bg-white/[0.05] dark:text-gray-300 dark:hover:bg-white/[0.1]"
                         >
                             <Mail className="mb-2 h-6 w-6 text-blue-600" />
                             <span className="font-medium">E-mail</span>
                             <span className="text-sm text-gray-500 dark:text-gray-400">
-                                suporte@seudominio.com
+                                kelverwt@gmail.com
                             </span>
                         </a>
 
