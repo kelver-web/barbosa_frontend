@@ -12,7 +12,9 @@ const statusLabels: Record<string, string> = {
 const KitchenPage: React.FC = () => {
   const { pedidosCozinha, atualizarPedido } = useKitchen();
 
-  const avancarStatus = async (pedido: any) => {
+  const avancarStatus = async (pedido: {
+    id: any; status: 'pendente' | 'preparando' | 'pronto'
+  }) => {
     const proximo = {
       pendente: "preparando",
       preparando: "pronto",
@@ -59,7 +61,7 @@ const KitchenPage: React.FC = () => {
                         {item.quantidade}x {item.produto.nome}
                         {item.observacoes && (
                           <span className="ml-2 text-sm font-normal text-gray-700">
-                              Obs: ({item.observacoes})
+                            Obs: ({item.observacoes})
                           </span>
                         )}
                         {isNew && (
@@ -71,7 +73,11 @@ const KitchenPage: React.FC = () => {
                 </ul>
                 {pedido.status !== "pronto" && (
                   <button
-                    onClick={() => avancarStatus(pedido)}
+                    onClick={() => {
+                      if (pedido.status === "pendente" || pedido.status === "preparando") {
+                        avancarStatus({ id: pedido.id, status: pedido.status });
+                      }
+                    }}
                     className="bg-black text-white px-4 py-1 rounded-lg"
                   >
                     Próximo status

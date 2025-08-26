@@ -354,7 +354,7 @@ export default function RecentOrders() {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={7} className="py-3 text-center text-gray-500 dark:text-gray-400">
+                <TableCell {...{ colSpan: 7 }} className="py-3 text-center text-gray-500 dark:text-gray-400">
                   Nenhum pedido encontrado.
                 </TableCell>
               </TableRow>

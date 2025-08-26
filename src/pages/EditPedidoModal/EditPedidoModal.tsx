@@ -36,6 +36,10 @@ const EditarPedidoModal: React.FC<Props> = ({ pedido, onClose, onUpdated }) => {
     api.get("/produtos/").then((res) => setProdutos(res.data.results || []));
   }, []);
 
+  useEffect(() => {
+    setItens(pedido.itens || []);
+  }, [pedido.itens]);
+
   const adicionarNovoItem = () => {
     setNovosItens([...novosItens, { produto: produtos[0]?.id || 0, quantidade: 1 }]);
   };

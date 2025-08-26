@@ -10,13 +10,6 @@ interface Pedido {
 }
 
 // Mapeamento de status para cor do card da mesa
-const statusColors = {
-    pendente: "bg-yellow-400 dark:bg-yellow-600",
-    preparando: "bg-blue-400 dark:bg-blue-600",
-    pronto: "bg-green-400 dark:bg-green-600",
-    entregue: "bg-gray-400 dark:bg-gray-600",
-    pago: "bg-green-200 dark:bg-green-800",
-};
 
 // Gera um array de 22 mesas
 const mesas = Array.from({ length: 22 }, (_, i) => ({

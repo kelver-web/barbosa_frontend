@@ -3,6 +3,7 @@ import React, { createContext, useState, useContext, ReactNode, useCallback, use
 import api from "../services/api";
 
 interface PedidoPronto {
+  mesa: ReactNode;
   id: number;
   nome_cliente: string;
 }

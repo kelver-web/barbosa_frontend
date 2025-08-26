@@ -1,5 +1,6 @@
 interface CategoryCardProps {
   name: string;
+  totalProdutos?: number;
 }
 
 export default function CategoryCard({ name }: CategoryCardProps) {

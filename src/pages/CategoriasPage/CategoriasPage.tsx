@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import api from "../../services/api"; // ajuste o caminho conforme necessário
-import CategoriaCard from "../../categories/CategoriaCard"; // ajuste o caminho conforme necessário
+import api from "../../services/api";
+import CategoryCard from "../../components/menu/CategoryCard";
 
 
 type Produto = {
@@ -36,9 +36,9 @@ export default function CategoriasPage() {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 md:gap-6">
       {categorias.map((cat) => (
-        <CategoriaCard
+        <CategoryCard
           key={cat.id}
-          nome={cat.nome}
+          name={cat.nome}
           totalProdutos={cat.produtos ? cat.produtos.length : 0}
         />
       ))}

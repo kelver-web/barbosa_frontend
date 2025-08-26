@@ -6,17 +6,13 @@ import { IoCheckmarkDoneSharp } from "react-icons/io5";
 import api from "../../services/api";
 import Modal from "./Modal";
 
-interface Pedido {
-  mesa: string;
-  status: "pendente" | "preparando" | "pronto" | "entregue" | "pago";
-}
+
 
 const mesasTotal = 22;
 
 const CartPage = () => {
   const { cartItems, removeFromCart, clearCart, updateQuantity } = useCart();
   const [pedidoId, setPedidoId] = useState<number | null>(null);
-  const [clienteNome, setClienteNome] = useState<string>("Cliente Desconhecido");
   const [mesa, setMesa] = useState("");
   const [modalAberto, setModalAberto] = useState(false);
   const [nomeCliente, setNomeCliente] = useState("");
@@ -34,9 +30,9 @@ const CartPage = () => {
   const fetchMesasOcupadas = async () => {
     setLoadingMesas(true);
     try {
-      const response = await api.get<Pedido[]>("/pedidos/?status__in=pendente,preparando,pronto,entregue");
+      const response = await api.get("/pedidos/?status__in=pendente,preparando,pronto,entregue");
 
-      const ocupadas = response.data.results.map(pedido => pedido.mesa);
+      const ocupadas = response.data.results.map((pedido: { mesa: any; }) => pedido.mesa);
 
       setMesasOcupadas(ocupadas);
     } catch (error) {
@@ -74,7 +70,6 @@ const CartPage = () => {
 
       const response = await api.post("/pedidos/", pedido);
       setMensagem(`Pedido #${response.data.id} enviado com sucesso!`);
-      setClienteNome(nomeCliente);
       setMesa(mesa);
       setModalAberto(false);
       clearCart();
