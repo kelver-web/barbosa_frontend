@@ -45,13 +45,8 @@ export const GarcomProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   useEffect(() => {
     fetchPedidosProntos();
 
-    const protocol = window.location.protocol === "https:" ? "wss" : "ws";
-    const host = "127.0.0.1:8000";
-    const url = `${protocol}://${host}/ws/pedidos/`;
-
-    console.log("Conectando WebSocket do GarcomProvider em:", url);
-    const ws = new WebSocket(url);
-    wsRef.current = ws;
+    const ws = new WebSocket("ws://127.0.0.1:8000/ws/pedidos/");
+    
 
     ws.onmessage = () => {
         // 💡 SOLUÇÃO: Sempre que uma mensagem WebSocket for recebida,
