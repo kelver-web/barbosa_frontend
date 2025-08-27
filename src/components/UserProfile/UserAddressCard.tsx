@@ -24,18 +24,13 @@ export default function UserAddressCard() {
         
         // --- ADICIONE ESTES CONSOLE.LOGS ---
         const loggedInUsername = localStorage.getItem("loggedInUsername");
-        console.log("1. Username do localStorage:", loggedInUsername);
-        
-        console.log("2. Lista de usernames da API:", res.data.results.map((u: any) => u.username));
-        // --- FIM DOS CONSOLE.LOGS ---
-
+      
         if (res.data && res.data.results && loggedInUsername) {
           const user = res.data.results.find(
             (u: any) => u.username === loggedInUsername
           );
           
           if (user) {
-            console.log("3. Usuário encontrado:", user);
             setAddress({
               country: user.country,
               state: user.state,
