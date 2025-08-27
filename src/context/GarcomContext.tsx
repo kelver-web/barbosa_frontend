@@ -46,8 +46,10 @@ export const GarcomProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     fetchPedidosProntos();
 
     const ws = new WebSocket("ws://127.0.0.1:8000/ws/pedidos/");
-    
 
+
+
+    
     ws.onmessage = () => {
         // 💡 SOLUÇÃO: Sempre que uma mensagem WebSocket for recebida,
         // re-buscamos a lista de pedidos para garantir que ela está atualizada.
