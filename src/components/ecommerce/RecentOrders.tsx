@@ -26,6 +26,8 @@ interface ItemPedido {
 interface Pedido {
   id: number;
   itens_pedido: ItemPedido[];
+  nome_cliente:string;
+  mesa: string;
   valor_total: number;
   status: "pago" | "pendente" | "cancelado";
   criado_em: string;
@@ -191,6 +193,13 @@ export default function RecentOrders() {
               <TableCell isHeader className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400 min-w-[250px]">
                 Produtos
               </TableCell>
+
+              <TableCell isHeader className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400 min-w-[250px]">
+                Cliente
+              </TableCell>
+              <TableCell isHeader className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400 min-w-[250px]">
+                Mesa
+              </TableCell>
               <TableCell isHeader className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400 min-w-[120px]">
                 Preço
               </TableCell>
@@ -226,6 +235,12 @@ export default function RecentOrders() {
                   </div>
                 </TableCell>
                 <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                  {pedido.nome_cliente}
+                </TableCell>
+                <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                  {pedido.mesa}
+                </TableCell>
+                <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                   R$ {pedido.valor_total.toFixed(2).replace(".", ",")}
                 </TableCell>
                 <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
@@ -246,7 +261,7 @@ export default function RecentOrders() {
         <button
           disabled={page === 1}
           onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-          className="px-3 py-1 rounded-md text-sm disabled:opacity-50 py-1 text-gray-500 dark:text-gray-400"
+          className="px-3 py-1 rounded-md text-sm disabled:opacity-50 py-1 text-gray-500 dark:text-gray-400 dark:hover:text-gray-300"
         >
           Anterior
         </button>
@@ -256,7 +271,7 @@ export default function RecentOrders() {
         <button
           disabled={page === totalPages}
           onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
-          className="px-3 py-1 rounded-md text-sm disabled:opacity-50 text--800 py-1 text-gray-500 dark:text-gray-400"
+          className="px-3 py-1 rounded-md text-sm disabled:opacity-50 text--800 py-1 text-gray-500 dark:text-gray-400 dark:hover:text-gray-300"
         >
           Próxima
         </button>
