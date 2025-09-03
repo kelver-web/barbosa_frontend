@@ -26,7 +26,9 @@ export default function AuthLayout({
                 />
               </Link>
               <p className="text-center text-gray-400 dark:text-white/60">
-                Free and Open-Source Tailwind CSS Admin Dashboard Template
+                Petiscaria Barbosa - O melhor lugar para saborear petiscos
+                deliciosos e bebidas refrescantes em um ambiente acolhedor e
+                descontraído.
               </p>
             </div>
           </div>
